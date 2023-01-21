@@ -5,7 +5,7 @@
 using namespace std;
 
 
-
+// to print a sudoku
 void printSudoku(int arr[9][9])
 {
     cout << "* * * * * * * * * * * * * * * * * * * * * * * * *" << endl;
@@ -22,6 +22,7 @@ void printSudoku(int arr[9][9])
     cout << "* * * * * * * * * * * * * * * * * * * * * * * * *" << endl;
 }
 
+// verifies if we can place a num or not 
 bool canPlace(int arr[9][9] , int row, int col, int n)
 {
     if(arr[row][col]!= 0) return false;
@@ -40,7 +41,7 @@ bool canPlace(int arr[9][9] , int row, int col, int n)
         return false;
     }
 }
-
+// put the num which we can place in a vector 
 vector<int> findPlacebles(int arr[9][9], int r, int c)
 {
     vector<int> cps= {};
@@ -53,6 +54,32 @@ vector<int> findPlacebles(int arr[9][9], int r, int c)
 
 }
 
+void copyArray(int arr[9][9] ,  int arrCpy[9][9] )
+{
+    for(int y = 0; y <9; y++)
+        for(int x = 0; x < 9; x++)
+            arrCpy[y][x] = arr[y][x];
+
+}
+// find nextCol ans nextRow 
+void nextEmpty( int arr[9][9] , int row , int col , int &nextRow , int &nextCol )
+{
+    int index = 9 * 9 ;
+    // on commence par la prochaine celluel
+    for( int i = row * 9 + col + 1 ; i < 9   ;i++  )
+    {
+        if( arr[i / 9][i % 9] == 0)
+        {
+            index = i;
+            break;
+        }
+    }
+
+    nextRow = index / 9;
+    nextCol = index % 9;
+}
+
+// for solving a sudoku 
 bool solveSudoku(int arr[9][9], int row, int col)
 {
     if( row > 8 ) return true;
@@ -62,14 +89,25 @@ bool solveSudoku(int arr[9][9], int row, int col)
     if( placeables.size() == 0 ) return false;
 
     bool status = false;
+    for( int i = 0; i < placeables.size();i++)
+    {
+        int n = placeables[i];
+        int arraCpy[9][9];
+        copyArray( arr, arraCpy);
+        arraCpy[row][col] = n;
+        int nexCol ,nexRow ;
 
-    
+        nextEmpty( arraCpy , row , col , nexRow , nexCol);
+
+        if( solveSudoku ( arraCpy, nexRow ,nexCol ))
+        {
+            copyArray( arraCpy , arr);
+            status = true;
+            break;
+        }
+    }
 
     return status;
-
-
-
-
 }
 
 
